@@ -1,0 +1,32 @@
+version: "3"
+
+services:
+  pg:
+    image: postgres:latest
+    restart: always
+    ports:
+      - 5432:5432
+    enviroment:
+      POSTGRES_USER: admin 
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: sqlx_db
+      TZ: "Asia/Tokyo"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    ports:
+      - 81:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pg@admin.sql
+      PGADMIN_DEFAULT_PASSWORD: password
+    depends_on:
+      - pg
+  
+  app:
+    build: .
+    tty: true 
+    volumes:
+      - .:/go/src/app 
