@@ -16,4 +16,6 @@
 
 # postgresql secret
 /postgresql/data/*
-/pgadmin4/*
+/pgadmin4/sessions
+/pgadmin4/storage
+/pgadmin4/pgadmin4.db 
