@@ -19,6 +19,7 @@ type Article struct {
 	ID        int64     `db:"id"`
 	Title     string    `db:"title"`
 	Body      string    `db:"body"`
+	UserId    int64     `db:"user_id"`
 	CreatedAt time.Time `db:"created_at"`
 }
 
@@ -26,6 +27,15 @@ type ArticleTag struct {
 	ID        int64 `db:"id"`
 	ArticleId int64 `db:"article_id"`
 	TagId     int64 `db:"tag_id"`
+}
+
+type ArticleResponse struct {
+	ID        int64     `db:"id"`
+	Title     string    `db:"title"`
+	Body      string    `db:"body"`
+	UserId    int64     `db:"user_id"`
+	CreatedAt time.Time `db:"created_at"`
+	Tags      []Tag
 }
 
 func main() {
@@ -71,4 +81,31 @@ func main() {
 	}
 
 	fmt.Println(articletag)
+
+	var articleDetail Article
+	err = db.Get(&articleDetail, "SELECT id, title, body, user_id, created_at FROM articles WHERE id = $1", createId)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println(articleDetail)
+
+	articleTags := []Tag{}
+	err = db.Select(&articleTags, "SELECT tags.id, tags.name, tags.created_at FROM tags LEFT JOIN articles_tags ON tags.id = articles_tags.tag_id WHERE articles_tags.article_id = $1", createId)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	fmt.Println(articleTags)
+
+	articleShow := &ArticleResponse{
+		ID:        articleDetail.ID,
+		Title:     articleDetail.Title,
+		Body:      articleDetail.Body,
+		UserId:    articleDetail.UserId,
+		CreatedAt: articleDetail.CreatedAt,
+		Tags:      articleTags,
+	}
+
+	fmt.Println(articleShow)
 }

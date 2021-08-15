@@ -1,7 +1,3 @@
--- DROP TABLE IF EXISTS `articles`;
--- DROP TABLE IF EXISTS `tags`;
--- DROP TABLE IF EXISTS `articles_tags`;
-
 create table if not exists articles(
     id int generated always as identity primary key,
     title text not null,
